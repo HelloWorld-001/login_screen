@@ -17,26 +17,34 @@ class MainApp extends StatelessWidget {
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: Colors.black
       ),
-      home: LoginPage(),
+      home: SignUpLoginPage(),
     );
   }
 }
 
-class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+class SignUpLoginPage extends StatefulWidget {
+  SignUpLoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignUpLoginPage> createState() => _SignUpLoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpLoginPageState extends State<SignUpLoginPage> with TickerProviderStateMixin {
+  late final TabController signInUpController;
   final usernameController = TextEditingController();
+  final usernameEmailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    signInUpController =  TabController(length: 2, vsync: this);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.sizeOf(context);
-    double outerRadius = 60;
+    double outerRadius = 45;
     double innerRadius = 0;
     return Scaffold(
       body: Container(
@@ -61,108 +69,254 @@ class _LoginPageState extends State<LoginPage> {
                     shadowColor: Colors.white.withOpacity(0.9),
                     color: Colors.white.withOpacity(0.8),
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 20, right: 20, top: 75),
-                      child: Column(
-                        // mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Signup",
-                            style: TextStyle(color: Colors.black, fontSize: 40, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 15),
-                          TF(
-                            controller: usernameController,
-                            textInputType: TextInputType.name,
-                            hintText: "Username",
-                            prefixIcon: Icons.person,
-                          ),
-                          SizedBox(height: 20),
-                          TF(
-                            controller: passwordController,
-                            textInputType: TextInputType.text,
-                            hintText: "Email",
-                            prefixIcon: Icons.email_rounded,
-                          ),
-                          SizedBox(height: 20),
-                          TF(
-                            controller: passwordController,
-                            textInputType: TextInputType.text,
-                            hintText: "Password",
-                            prefixIcon: Icons.password,
-                          ),
-                          SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ButtonStyle(
-                              fixedSize: MaterialStatePropertyAll(Size(double.maxFinite, 50)),
-                              backgroundColor: MaterialStatePropertyAll(Colors.black),
-                              overlayColor: MaterialStatePropertyAll(Colors.grey.shade700),
-                              padding: MaterialStatePropertyAll(EdgeInsets.symmetric(vertical: 10))
-                            ),
-                            child: Text(
-                              "SignUp",
-                              style: TextStyle(color: Colors.lightGreenAccent, fontSize: 25),
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          SizedBox(
-                            width: double.maxFinite, height: 20,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Scaffold(
+                        backgroundColor: Colors.transparent,
+                        appBar: TabBar(
+                          controller: signInUpController,
+                          dividerColor: Colors.black, dividerHeight: 2,
+                          indicatorColor: Colors.teal, indicatorSize: TabBarIndicatorSize.tab, indicatorWeight: 5, 
+                          tabs: [
+                            Row(
                               children: [
-                                Expanded(child: Container(color: Colors.grey.shade400, height: 1)),
-                                SizedBox(width: 10),
                                 Text(
-                                  "OR",
-                                  style: TextStyle(fontSize: 20, color: Colors.grey.shade400, fontWeight: FontWeight.bold),
+                                  "Log In",
+                                  style: TextStyle(color: Colors.black, fontSize: 25, fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(width: 10),
-                                Expanded(child: Container(color: Colors.grey.shade400, height: 1)),
+                                Spacer()
                               ],
                             ),
-                          ),
-                          SizedBox(height: 10),
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ButtonStyle(
-                              shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                              backgroundColor: MaterialStatePropertyAll(Colors.black),
-                              padding: MaterialStatePropertyAll(EdgeInsets.symmetric(vertical: 5)),
-                              overlayColor: MaterialStatePropertyAll(Colors.grey.shade700)
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            Row(
                               children: [
-                                SizedBox(
-                                  width: 40, height: 40,
-                                  child: Image.asset("assets/images/google.png", scale: 0.1)
-                                ),
-                                SizedBox(width: 10),
+                                Spacer(),
                                 Text(
-                                  "Sign Up with Google",
-                                  style: TextStyle(color: Colors.white, fontSize: 20),
-                                )
+                                  "Sign up",
+                                  style: TextStyle(color: Colors.black, fontSize: 25, fontWeight: FontWeight.bold),
+                                ),
                               ],
                             ),
-                          )
-                        ],
+                          ],
+                        ),
+                        body: TabBarView(
+                          controller: signInUpController,
+                          children: [
+                            Tab(
+                              child: LogIn(usernameEmailController: usernameEmailController, passwordController: passwordController),
+                            ),
+                            Tab(
+                              child: SignUp(usernameController: usernameController, passwordController: passwordController),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
               Positioned(
-                top: media.height/10 - 25,
+                top: media.height/10,
                 child: CircleAvatar(
-                  radius: outerRadius - innerRadius, backgroundColor: Colors.black.withOpacity(0.5),
-                  child: Icon(Icons.headphones, color: Colors.white, size: 75),
+                  radius: outerRadius - innerRadius - 10, backgroundColor: Colors.black.withOpacity(0.5),
+                  child: Icon(Icons.headphones, color: Colors.white, size: 50),
                 ),
               )
             ],
           ),
         ),
       )
+    );
+  }
+}
+
+class SignUp extends StatelessWidget {
+  const SignUp({
+    super.key,
+    required this.usernameController,
+    required this.passwordController,
+  });
+
+  final TextEditingController usernameController;
+  final TextEditingController passwordController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(height: 15),
+          TF(
+            controller: usernameController,
+            textInputType: TextInputType.name,
+            hintText: "Username",
+            prefixIcon: Icons.person,
+          ),
+          SizedBox(height: 20),
+          TF(
+            controller: passwordController,
+            textInputType: TextInputType.text,
+            hintText: "Email",
+            prefixIcon: Icons.email_rounded,
+          ),
+          SizedBox(height: 20),
+          TF(
+            controller: passwordController,
+            textInputType: TextInputType.text,
+            hintText: "Password",
+            prefixIcon: Icons.password,
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {},
+            style: ButtonStyle(
+              fixedSize: MaterialStatePropertyAll(Size(double.maxFinite, 50)),
+              backgroundColor: MaterialStatePropertyAll(Colors.black),
+              overlayColor: MaterialStatePropertyAll(Colors.grey.shade700),
+              padding: MaterialStatePropertyAll(EdgeInsets.symmetric(vertical: 10))
+            ),
+            child: Text(
+              "SignUp",
+              style: TextStyle(color: Colors.lightGreenAccent, fontSize: 25),
+            ),
+          ),
+          SizedBox(height: 10),
+          SizedBox(
+            width: double.maxFinite, height: 20,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(child: Container(color: Colors.grey.shade400, height: 1)),
+                SizedBox(width: 10),
+                Text(
+                  "OR",
+                  style: TextStyle(fontSize: 20, color: Colors.grey.shade400, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(width: 10),
+                Expanded(child: Container(color: Colors.grey.shade400, height: 1)),
+              ],
+            ),
+          ),
+          SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {},
+            style: ButtonStyle(
+              shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+              backgroundColor: MaterialStatePropertyAll(Colors.black),
+              padding: MaterialStatePropertyAll(EdgeInsets.symmetric(vertical: 5)),
+              overlayColor: MaterialStatePropertyAll(Colors.grey.shade700)
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 40, height: 40,
+                  child: Image.asset("assets/images/google.png", scale: 0.1)
+                ),
+                SizedBox(width: 10),
+                Text(
+                  "Sign Up with Google",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class LogIn extends StatelessWidget {
+  const LogIn({
+    super.key,
+    required this.usernameEmailController,
+    required this.passwordController,
+  });
+
+  final TextEditingController usernameEmailController;
+  final TextEditingController passwordController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(height: 15),
+          TF(
+            controller: usernameEmailController,
+            textInputType: TextInputType.text,
+            hintText: "Username/Email",
+            prefixIcon: Icons.account_box_rounded,
+          ),
+          SizedBox(height: 20),
+          TF(
+            controller: passwordController,
+            textInputType: TextInputType.text,
+            hintText: "Password",
+            prefixIcon: Icons.password,
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {},
+            style: ButtonStyle(
+              fixedSize: MaterialStatePropertyAll(Size(double.maxFinite, 50)),
+              backgroundColor: MaterialStatePropertyAll(Colors.black),
+              overlayColor: MaterialStatePropertyAll(Colors.grey.shade700),
+              padding: MaterialStatePropertyAll(EdgeInsets.symmetric(vertical: 10))
+            ),
+            child: Text(
+              "LogIn",
+              style: TextStyle(color: Colors.lightGreenAccent, fontSize: 25),
+            ),
+          ),
+          SizedBox(height: 10),
+          SizedBox(
+            width: double.maxFinite, height: 20,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(child: Container(color: Colors.grey.shade400, height: 1)),
+                SizedBox(width: 10),
+                Text(
+                  "OR",
+                  style: TextStyle(fontSize: 20, color: Colors.grey.shade400, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(width: 10),
+                Expanded(child: Container(color: Colors.grey.shade400, height: 1)),
+              ],
+            ),
+          ),
+          SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {},
+            style: ButtonStyle(
+              shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+              backgroundColor: MaterialStatePropertyAll(Colors.black),
+              padding: MaterialStatePropertyAll(EdgeInsets.symmetric(vertical: 5)),
+              overlayColor: MaterialStatePropertyAll(Colors.grey.shade700)
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 40, height: 40,
+                  child: Image.asset("assets/images/google.png", scale: 0.1)
+                ),
+                SizedBox(width: 10),
+                Text(
+                  "Log In with Google",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
