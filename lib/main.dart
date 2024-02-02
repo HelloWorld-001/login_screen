@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 void main() {
   runApp(MainApp());
@@ -44,87 +45,111 @@ class _SignUpLoginPageState extends State<SignUpLoginPage> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.sizeOf(context);
-    double outerRadius = 45;
+    double outerRadius = 60;
     double innerRadius = 0;
     return Scaffold(
-      body: Container(
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          image: DecorationImage(image: AssetImage("assets/images/bg.jpg"), fit: BoxFit.cover)
-        ),
-        child: SafeArea(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                height: media.height, width: media.width,
-                margin: EdgeInsets.symmetric(horizontal: media.width/10, vertical: media.height/7),
-                child: ClipPath(
-                  clipper: CardClipper(
-                    innerRadius: innerRadius, outerRadius: outerRadius,
-                    size: Size(media.width/1.25, media.height/1.4)
-                  ),
-                  child: Card(
-                    elevation: 2,
-                    shadowColor: Colors.white.withOpacity(0.9),
-                    color: Colors.white.withOpacity(0.8),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Scaffold(
-                        backgroundColor: Colors.transparent,
-                        appBar: TabBar(
-                          controller: signInUpController,
-                          dividerColor: Colors.black, dividerHeight: 2,
-                          indicatorColor: Colors.teal, indicatorSize: TabBarIndicatorSize.tab, indicatorWeight: 5, 
-                          tabs: [
-                            Row(
-                              children: [
-                                Text(
-                                  "Log In",
-                                  style: TextStyle(color: Colors.black, fontSize: 25, fontWeight: FontWeight.bold),
-                                ),
-                                Spacer()
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Spacer(),
-                                Text(
-                                  "Sign up",
-                                  style: TextStyle(color: Colors.black, fontSize: 25, fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        body: TabBarView(
-                          controller: signInUpController,
-                          children: [
-                            Tab(
-                              child: LogIn(usernameEmailController: usernameEmailController, passwordController: passwordController),
-                            ),
-                            Tab(
-                              child: SignUp(usernameController: usernameController, passwordController: passwordController),
-                            )
-                          ],
-                        ),
+      body: SafeArea(
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              height: media.height, width: media.width,
+              margin: EdgeInsets.symmetric(horizontal: media.width/10, vertical: media.height/7),
+              child: ClipPath(
+                clipper: CardClipper(
+                  innerRadius: innerRadius, outerRadius: outerRadius,
+                  size: Size(media.width/1.25, media.height/1.4)
+                ),
+                child: Card(
+                  elevation: 2,
+                  shadowColor: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withOpacity(0.8),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Scaffold(
+                      backgroundColor: Colors.transparent,
+                      appBar: TabBar(
+                        controller: signInUpController,
+                        dividerColor: Colors.black, dividerHeight: 2,
+                        indicatorColor: Colors.teal, indicatorSize: TabBarIndicatorSize.tab, indicatorWeight: 5, 
+                        tabs: [
+                          Row(
+                            children: [
+                              Text(
+                                "Log In",
+                                style: TextStyle(color: Colors.black, fontSize: 25, fontWeight: FontWeight.bold),
+                              ),
+                              Spacer()
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Spacer(),
+                              Text(
+                                "Sign up",
+                                style: TextStyle(color: Colors.black, fontSize: 25, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      body: TabBarView(
+                        controller: signInUpController,
+                        children: [
+                          Tab(
+                            child: LogIn(usernameEmailController: usernameEmailController, passwordController: passwordController),
+                          ),
+                          Tab(
+                            child: SignUp(usernameController: usernameController, passwordController: passwordController),
+                          )
+                        ],
                       ),
                     ),
                   ),
                 ),
               ),
-              Positioned(
-                top: media.height/10,
-                child: CircleAvatar(
-                  radius: outerRadius - innerRadius - 10, backgroundColor: Colors.black.withOpacity(0.5),
-                  child: Icon(Icons.headphones, color: Colors.white, size: 50),
+            ),
+            Positioned(
+              top: media.height/10.5,
+              child: CircleAvatar(
+                backgroundColor: Color.fromRGBO(255,212,38, 1),
+                radius: outerRadius - 10,
+                child: Lottie.asset(
+                  "assets/lottie/pandaWithHeadphones.json",
+                  animate: true,
+                  width: 150, height: 150
                 ),
-              )
-            ],
-          ),
+              ),
+            ),
+          ],
         ),
       )
     );
+  }
+}
+
+class CardClipper extends CustomClipper<Path> {
+  double outerRadius = 0;
+  double innerRadius = 0;
+  Size size = Size(0, 0);
+  CardClipper({required this.outerRadius, required this.innerRadius, required this.size});
+  @override
+  Path getClip(Size size) {
+    size = this.size;
+    var path = Path();
+    path.lineTo(0, size.height);
+    path.lineTo(size.width, size.height);
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width/2 + outerRadius, 0);
+    path.arcTo(Rect.fromCircle(center: Offset(size.width/2 - innerRadius, 10), radius: outerRadius), 0, pi, false);
+    path.lineTo(size.width/2 - outerRadius, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
   }
 }
 
@@ -269,7 +294,7 @@ class LogIn extends StatelessWidget {
               padding: MaterialStatePropertyAll(EdgeInsets.symmetric(vertical: 10))
             ),
             child: Text(
-              "LogIn",
+              "Login",
               style: TextStyle(color: Colors.lightGreenAccent, fontSize: 25),
             ),
           ),
@@ -320,32 +345,6 @@ class LogIn extends StatelessWidget {
     );
   }
 }
-
-class CardClipper extends CustomClipper<Path> {
-  double outerRadius = 0;
-  double innerRadius = 0;
-  Size size = Size(0, 0);
-  CardClipper({required this.outerRadius, required this.innerRadius, required this.size});
-  @override
-  Path getClip(Size size) {
-    size = this.size;
-    var path = Path();
-    path.lineTo(0, size.height);
-    path.lineTo(size.width, size.height);
-    path.lineTo(size.width, 0);
-    path.lineTo(size.width/2 + outerRadius, 0);
-    path.arcTo(Rect.fromCircle(center: Offset(size.width/2 - innerRadius, 0), radius: outerRadius), 0, pi, false);
-    path.lineTo(size.width/2 - outerRadius, 0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return false;
-  }
-}
-
 
 class TF extends StatefulWidget {
   final TextEditingController controller;
