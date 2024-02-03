@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:login_screen/background_page.dart';
 import 'package:lottie/lottie.dart';
 
 void main() {
@@ -18,7 +19,13 @@ class MainApp extends StatelessWidget {
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: Colors.black
       ),
-      home: SignUpLoginPage(),
+      home: Stack(
+        alignment: Alignment.center,
+        children: [
+          BackgroundPage(),
+          SignUpLoginPage(),
+        ],
+      ),
     );
   }
 }
@@ -48,11 +55,13 @@ class _SignUpLoginPageState extends State<SignUpLoginPage> with TickerProviderSt
     double outerRadius = 60;
     double innerRadius = 0;
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Stack(
           alignment: Alignment.center,
           children: [
             Container(
+              color: Colors.transparent,
               height: media.height, width: media.width,
               margin: EdgeInsets.symmetric(horizontal: media.width/10, vertical: media.height/7),
               child: ClipPath(
