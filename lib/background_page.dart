@@ -1,8 +1,9 @@
-// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors
-
+// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, prefer_const_literals_to_create_immutables
+// +33, +64
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class BackgroundPage extends StatelessWidget {
   BackgroundPage({super.key});
@@ -11,19 +12,29 @@ class BackgroundPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var media = MediaQuery.sizeOf(context);
     var safeArea = MediaQuery.of(context).padding;
-    return SizedBox(
-      height: media.height, width: media.width,
-      child: ClipPath(
-        clipper: BackgroundClipper(safeArea),
-        child: Card(
-          elevation: 2,
-          shadowColor: Colors.white.withOpacity(0.9),
-          color: Colors.white.withOpacity(0.8),
-          child: Container(
-            height: media.height, width: media.width, color: Color(0xff0D9276),
+    return Stack(
+      children: [
+        ClipPath(
+          clipper: BackgroundClipper(safeArea),
+          child: Card(
+            elevation: 2,
+            shadowColor: Colors.white.withOpacity(0.9),
+            color: Colors.white.withOpacity(0.8),
+            child: Container(
+              height: media.height, width: media.width, color: Color(0xff0D9276),
+            )
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          child: SafeArea(
+            child: Lottie.asset(
+              "assets/lottie/musicRhythm.json",
+              animate: true, width: media.width, alignment: Alignment.bottomCenter, fit: BoxFit.cover
+            ),
           )
         ),
-      ),
+      ],
     );
   }
 }
