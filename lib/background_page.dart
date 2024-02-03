@@ -29,6 +29,15 @@ class BackgroundPage extends StatelessWidget {
           bottom: 0,
           child: SafeArea(
             child: Lottie.asset(
+              "assets/lottie/notes.json",
+              animate: true, alignment: Alignment.bottomCenter, fit: BoxFit.cover, width: media.width, height: media.height
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          child: SafeArea(
+            child: Lottie.asset(
               "assets/lottie/musicRhythm.json",
               animate: true, width: media.width, alignment: Alignment.bottomCenter, fit: BoxFit.cover
             ),
