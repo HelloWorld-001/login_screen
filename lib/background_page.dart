@@ -21,15 +21,27 @@ class BackgroundPage extends StatelessWidget {
             shadowColor: Colors.white.withOpacity(0.9),
             color: Colors.white.withOpacity(0.8),
             child: Container(
-              height: media.height, width: media.width, color: Color(0xff0D9276),
+              height: media.height, width: media.width, color: Color(0xff7E30E1),
             )
+          ),
+        ),
+        Positioned(
+          top: 0, left: 0,
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Lottie.asset(
+                "assets/lottie_json/disk1.json",
+                animate: true, alignment: Alignment.bottomCenter, fit: BoxFit.cover, width: 120, height: 120
+              ),
+            ),
           ),
         ),
         Positioned(
           bottom: 0,
           child: SafeArea(
             child: Lottie.asset(
-              "assets/lottie/notes.json",
+              "assets/lottie_json/notes1.json",
               animate: true, alignment: Alignment.bottomCenter, fit: BoxFit.cover, width: media.width, height: media.height
             ),
           ),
@@ -38,7 +50,7 @@ class BackgroundPage extends StatelessWidget {
           bottom: 0,
           child: SafeArea(
             child: Lottie.asset(
-              "assets/lottie/musicRhythm.json",
+              "assets/lottie_json/musicRhythm.json",
               animate: true, width: media.width, alignment: Alignment.bottomCenter, fit: BoxFit.cover
             ),
           )

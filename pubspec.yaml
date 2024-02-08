@@ -22,6 +22,5 @@ flutter:
   assets:
   - assets/images/bg.jpg
   - assets/images/google.png
-  - assets/lottie/pandaWithHeadphones.json
-  - assets/lottie/musicRhythm.json
-  - assets/lottie/notes.json
+
+  - assets/lottie_json/
