@@ -2,12 +2,14 @@
 
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:login_screen/background_page.dart';
 import 'package:login_screen/firebase_options.dart';
 import 'package:login_screen/login.dart';
 import 'package:login_screen/signup.dart';
+import 'package:login_screen/verification_page.dart';
 import 'package:lottie/lottie.dart';
 
 Future<void> main() async {
@@ -29,9 +31,43 @@ class MainApp extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           BackgroundPage(),
-          SignUpLoginPage(),
+          AuthChecker(),
         ],
       ),
+    );
+  }
+}
+
+class AuthChecker extends StatelessWidget {
+  const AuthChecker({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: FirebaseAuth.instance.authStateChanges().first,
+      builder: (context, snapshot) {
+        if(snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: LottieBuilder.asset("assets/lottie_json/musicLoader.json"),
+          );
+        } else {
+          if(snapshot.hasData && snapshot.data != null) {
+            if(!snapshot.data!.emailVerified) {
+              return VerificationPage(
+                name: snapshot.data!.uid,
+                email: snapshot.data!.email!
+              );
+            }
+            return SafeArea(
+              child: Scaffold(
+                body: Text(snapshot.data.toString()),
+              ),
+            );
+          } else {
+            return SignUpLoginPage();
+          }
+        }
+      },
     );
   }
 }
@@ -68,8 +104,8 @@ class _SignUpLoginPageState extends State<SignUpLoginPage> {
                     size: Size(media.width/1.25, media.height/1.4)
                   ),
                   child: Card(
-                    elevation: 0,
-                    shadowColor: Colors.white.withOpacity(0.8),
+                    elevation: 1,
+                    shadowColor: Colors.white.withOpacity(0.7),
                     color: Color(0xFFFBF9F1).withOpacity(0.8),
                     child: Container(
                       height: double.maxFinite, width: double.maxFinite,

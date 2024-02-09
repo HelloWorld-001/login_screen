@@ -1,10 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:login_screen/auth_methods.dart';
 import 'package:login_screen/input_box.dart';
+import 'package:login_screen/verification_page.dart';
 
 class SignUp extends StatefulWidget {
-  SignUp({super.key});
+  const SignUp({super.key});
 
   @override
   State<SignUp> createState() => _SignUpState();
@@ -44,7 +46,7 @@ class _SignUpState extends State<SignUp> {
           ),
           SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () => performFunction(context),
             style: ButtonStyle(
               fixedSize: MaterialStatePropertyAll(Size(double.maxFinite, 50)),
               backgroundColor: MaterialStatePropertyAll(Colors.black),
@@ -100,6 +102,23 @@ class _SignUpState extends State<SignUp> {
           )
         ],
       ),
+    );
+  }
+
+  void performFunction(context) async {
+    String registerResult = await AuthMethods().registeruser(
+      email: emailController.text,
+      password: passwordController.text
+    );
+    if(registerResult != 'success') {
+      print(registerResult);
+      return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VerificationPage(email: emailController.text, name: nameController.text)
+      )
     );
   }
 
