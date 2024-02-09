@@ -33,13 +33,15 @@ class _VerificationPageState extends State<VerificationPage> {
     timer = Timer.periodic(
       Duration(seconds: 1),
       (timer) {
-        
+        print(isVerified);
+        checkEmailVerified();
       },
     );
 
     startTimer();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.sizeOf(context);
@@ -102,56 +104,66 @@ class _VerificationPageState extends State<VerificationPage> {
                           ],
                         )
                       ),
-                      Lottie.asset(
-                        "assets/lottie_json/musicLoader.json",
-                        width: 150, height: 150
-                      ),
                       Column(
                         children: [
+                          Lottie.asset(
+                            (isVerified) ? "assets/lottie_json/pandaWithHeadphones.json" : "assets/lottie_json/musicLoader.json",
+                            width: 100, height: 100
+                          ),
+                          SizedBox(height: 10),
                           Text(
-                            "Still can't find the email? No problem", textAlign: TextAlign.center,
-                            style: TextStyle(color: Color(0xFF494D56), fontSize: 18, fontWeight: FontWeight.w400),
-                          ),
-                          ElevatedButton(
-                            onPressed: (!isResendButtonEnabled)
-                            ? null
-                            : () {
-                              setState(() {
-                                isResendButtonEnabled = false;
-                                timerSeconds = 90;
-                              });
-                              startTimer();
-                            },
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStatePropertyAll(
-                                (isResendButtonEnabled) ? Color(0xFF7E30E1) : Colors.transparent
-                              ),
-                              shape: MaterialStatePropertyAll(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                )
-                              ),
-                              side: MaterialStatePropertyAll(
-                                BorderSide(color: Color(0xFF7E30E1), width: 2)
-                              ),
-                              overlayColor: MaterialStatePropertyAll(Colors.grey.withOpacity(0.2))
-                            ),
-                            child: Text(
-                              (isResendButtonEnabled)
-                              ? "Resend Verification Link"
-                              : "Resend Verification Link in ${timerSeconds}s",
-                              style: TextStyle(color: (!isResendButtonEnabled) ? Color(0xFF7E30E1) : Colors.white, fontSize: 18),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {},
-                            child: Text(
-                              "Change email address!",
-                              style: TextStyle(color: Color(0xFF7E30E1), fontSize: 16, decoration: TextDecoration.underline, decorationColor: Color(0xFF7E30E1)),
-                            ),
+                            (isVerified) ? "Verified Successfully \u2713" : "Verifying.....",
+                            style: TextStyle(color: (isVerified) ? Color(0xFF7E30E1) : Color(0xFF494D56), fontSize: 20, fontWeight: FontWeight.w700),
                           )
                         ],
                       ),
+                      if(!isVerified)
+                        Column(
+                          children: [
+                            Text(
+                              "Still can't find the email? No problem", textAlign: TextAlign.center,
+                              style: TextStyle(color: Color(0xFF494D56), fontSize: 18, fontWeight: FontWeight.w400),
+                            ),
+                            ElevatedButton(
+                              onPressed: (!isResendButtonEnabled)
+                              ? null
+                              : () {
+                                setState(() {
+                                  isResendButtonEnabled = false;
+                                  timerSeconds = 90;
+                                });
+                                startTimer();
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStatePropertyAll(
+                                  (isResendButtonEnabled) ? Color(0xFF7E30E1) : Colors.transparent
+                                ),
+                                shape: MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  )
+                                ),
+                                side: MaterialStatePropertyAll(
+                                  BorderSide(color: Color(0xFF7E30E1), width: 2)
+                                ),
+                                overlayColor: MaterialStatePropertyAll(Colors.grey.withOpacity(0.2))
+                              ),
+                              child: Text(
+                                (isResendButtonEnabled)
+                                ? "Resend Verification Link"
+                                : "Resend Verification Link in ${timerSeconds}s",
+                                style: TextStyle(color: (!isResendButtonEnabled) ? Color(0xFF7E30E1) : Colors.white, fontSize: 18),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {},
+                              child: Text(
+                                "Change email address!",
+                                style: TextStyle(color: Color(0xFF7E30E1), fontSize: 16, decoration: TextDecoration.underline, decorationColor: Color(0xFF7E30E1)),
+                              ),
+                            )
+                          ],
+                        ),
                     ],
                   ),
                 ),
@@ -163,7 +175,17 @@ class _VerificationPageState extends State<VerificationPage> {
     );
   }
   
+  Future<void> checkEmailVerified() async {
+    user = auth.currentUser!;
+    await user.reload();
+
+    if(user.emailVerified) {
+      setState(() => isVerified = true);
+    }
+  }
+
   void startTimer() {
+    timerSeconds = 90;
     Timer.periodic(
       Duration(seconds: 1),
       (timer) {
@@ -173,8 +195,12 @@ class _VerificationPageState extends State<VerificationPage> {
         } else {
           setState(() => timerSeconds--);
         }
-        
       },
     );
+  }
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 }

@@ -58,10 +58,9 @@ class AuthChecker extends StatelessWidget {
                 email: snapshot.data!.email!
               );
             }
-            return SafeArea(
-              child: Scaffold(
-                body: Text(snapshot.data.toString()),
-              ),
+            Future.delayed(Duration(seconds: 5));
+            return Scaffold(
+              body: Text(snapshot.data.toString()),
             );
           } else {
             return SignUpLoginPage();
@@ -161,15 +160,11 @@ class _SignUpLoginPageState extends State<SignUpLoginPage> {
                 ),
               ),
               Positioned(
-                top: media.height/12.5,
-                child: CircleAvatar(
-                  backgroundColor: Color.fromRGBO(255,212,38, 1),
-                  radius: outerRadius - 10,
-                  child: Lottie.asset(
-                    "assets/lottie_json/pandaWithHeadphones.json",
-                    animate: true,
-                    width: 150, height: 150
-                  ),
+                top: media.height/20,
+                child: Lottie.asset(
+                  "assets/lottie_json/pandaWithHeadphones.json",
+                  animate: true,
+                  width: 150, height: 150
                 ),
               ),
             ],
