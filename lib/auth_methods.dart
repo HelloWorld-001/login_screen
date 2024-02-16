@@ -85,6 +85,20 @@ class AuthMethods {
     return res;
   }
 
+  // * : Google SignIn
+  Future<String> googleSignOut() async {
+    String res = "Some error occured";
+
+    try {
+      final google = await GoogleSignIn().disconnect();
+      google!.clearAuthCache();
+      res = "success";
+    } catch (err) {
+      res = err.toString();
+    }
+    return res;
+  }
+
   // * : Login User
   Future<String> loginUser({
     required String email,

@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login_screen/auth_methods.dart';
 import 'package:login_screen/main.dart';
 
 class LandingPage extends StatelessWidget {
@@ -14,7 +15,7 @@ class LandingPage extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () async {
-            // await FirebaseAuth.instance.currentUser!.delete();
+            String googleRes = await AuthMethods().googleSignOut();
             await FirebaseAuth.instance.signOut();
             Navigator.pushReplacement(
               context,
