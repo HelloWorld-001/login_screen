@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:login_screen/auth_methods.dart';
 import 'package:login_screen/input_box.dart';
+import 'package:login_screen/landing_page.dart';
 
 class LogIn extends StatefulWidget {
   LogIn({super.key});
@@ -37,7 +39,7 @@ class _LogInState extends State<LogIn> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: signIn,
               style: ButtonStyle(
                 fixedSize: MaterialStatePropertyAll(Size(double.maxFinite, 50)),
                 backgroundColor: MaterialStatePropertyAll(Colors.black),
@@ -69,7 +71,21 @@ class _LogInState extends State<LogIn> {
             ),
             SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                Map<String, String> googleSignInResult = await AuthMethods().googleSignIn();
+                if(googleSignInResult.entries.first.key != "err") {
+                  if(mounted) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LandingPage(),
+                      )
+                    );
+                  }
+                } else {
+                  print(googleSignInResult);
+                }
+              },
               style: ButtonStyle(
                 shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                 backgroundColor: MaterialStatePropertyAll(Colors.black),
@@ -95,6 +111,22 @@ class _LogInState extends State<LogIn> {
         ),
       ),
     );
+  }
+
+  void signIn() async {
+    String signInResult = await AuthMethods().loginUser(email: emailController.text, password: passwordController.text);
+    if(signInResult == "success") {
+      if(mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LandingPage(),
+          )
+        );
+      }
+    } else {
+      print(signInResult);
+    }
   }
 
   @override

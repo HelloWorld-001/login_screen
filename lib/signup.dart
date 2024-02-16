@@ -84,11 +84,11 @@ class _SignUpState extends State<SignUp> {
               if(googleSignInResult.entries.first.key != "err") {
                 if(mounted) {
                   Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LandingPage(),
-                  )
-                );
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LandingPage(),
+                    )
+                  );
                 }
               }
             },

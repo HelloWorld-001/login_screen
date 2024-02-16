@@ -60,6 +60,7 @@ class AuthMethods {
     };
 
     try {
+      
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       final GoogleSignInAuthentication? googleAuth =
@@ -81,6 +82,23 @@ class AuthMethods {
         "err" : err.toString()
       };
     }
+    return res;
+  }
+
+  // * : Login User
+  Future<String> loginUser({
+    required String email,
+    required String password
+  }) async {
+    String res = "Some error occured";
+
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      res = "success";
+    } catch (err) {
+      res = err.toString();
+    }
+
     return res;
   }
 }
