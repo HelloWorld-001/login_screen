@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:login_screen/auth_methods.dart';
 import 'package:login_screen/input_box.dart';
+import 'package:login_screen/landing_page.dart';
 import 'package:login_screen/verification_page.dart';
 
 class SignUp extends StatefulWidget {
@@ -78,7 +79,19 @@ class _SignUpState extends State<SignUp> {
           ),
           SizedBox(height: 10),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () async {
+              Map<String, String> googleSignInResult = await AuthMethods().googleSignIn();
+              if(googleSignInResult.entries.first.key != "err") {
+                if(mounted) {
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LandingPage(),
+                  )
+                );
+                }
+              }
+            },
             style: ButtonStyle(
               shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
               backgroundColor: MaterialStatePropertyAll(Colors.black),
@@ -106,12 +119,11 @@ class _SignUpState extends State<SignUp> {
   }
 
   void performFunction(context) async {
-    String registerResult = await AuthMethods().registerUser(
+    String registerResult = await AuthMethods().registerUserWithEmail(
       email: emailController.text,
       password: passwordController.text
     );
     if(registerResult != 'success') {
-      print(registerResult);
       return;
     }
     Navigator.push(

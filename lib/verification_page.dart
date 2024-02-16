@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:login_screen/auth_methods.dart';
 import 'package:login_screen/background_page.dart';
+import 'package:login_screen/landing_page.dart';
 import 'package:lottie/lottie.dart';
 
 class VerificationPage extends StatefulWidget {
@@ -35,7 +36,6 @@ class _VerificationPageState extends State<VerificationPage> {
     timer = Timer.periodic(
       Duration(seconds: 1),
       (timer) {
-        print(isVerified);
         checkEmailVerified();
       },
     );
@@ -191,19 +191,16 @@ class _VerificationPageState extends State<VerificationPage> {
         user.delete();
       } else {
         setState(() => isSignedUp = true);
-        Future.delayed(
-          Duration(seconds: 2),
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return Scaffold(
-                  body: Text("SignUp Successfull"),
-                );
-              },
-            )
+        if(mounted) {
+          Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return LandingPage();
+            },
           ),
         );
+        }
       }
     }
   }

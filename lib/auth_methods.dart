@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'users.dart' as model;
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // * : Register User
-  Future<String> registerUser({
+  Future<String> registerUserWithEmail({
     required String email,
     required String password
   }) async {
@@ -18,7 +19,7 @@ class AuthMethods {
       );
       res = "success";
     } catch (err) {
-      print("Register user error: $err");
+      res = err.toString();
     }
 
     return res;
@@ -49,6 +50,37 @@ class AuthMethods {
       res = err.toString();
     }
 
+    return res;
+  }
+
+  // * : Google SignIn
+  Future<Map<String, String>> googleSignIn() async {
+    Map<String, String> res = {
+      "start" : "start"
+    };
+
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      final userCred = await FirebaseAuth.instance.signInWithCredential(credential);
+      res = {
+        "name" : userCred.user!.displayName.toString(),
+        "email" : userCred.user!.email.toString()
+      };
+      return res;
+    } catch (err) {
+      res = {
+        "err" : err.toString()
+      };
+    }
     return res;
   }
 }

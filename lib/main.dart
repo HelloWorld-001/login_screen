@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:login_screen/background_page.dart';
 import 'package:login_screen/firebase_options.dart';
+import 'package:login_screen/landing_page.dart';
 import 'package:login_screen/login.dart';
 import 'package:login_screen/signup.dart';
 import 'package:login_screen/verification_page.dart';
@@ -58,10 +59,7 @@ class AuthChecker extends StatelessWidget {
                 email: snapshot.data!.email!
               );
             }
-            Future.delayed(Duration(seconds: 5));
-            return Scaffold(
-              body: Text(snapshot.data.toString()),
-            );
+            return LandingPage();
           } else {
             return SignUpLoginPage();
           }
