@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login_screen/auth_methods.dart';
 import 'package:login_screen/background_page.dart';
 import 'package:lottie/lottie.dart';
 
@@ -24,6 +25,7 @@ class _VerificationPageState extends State<VerificationPage> {
   bool isVerified = false;
   bool isResendButtonEnabled = false;
   int timerSeconds = 90;
+  bool isSignedUp = false;
 
   @override
   void initState() {
@@ -181,6 +183,28 @@ class _VerificationPageState extends State<VerificationPage> {
 
     if(user.emailVerified) {
       setState(() => isVerified = true);
+      String signUpResult = await AuthMethods().signUpUser(
+        name: widget.name,
+        email: widget.email
+      );
+      if(signUpResult != 'success') {
+        user.delete();
+      } else {
+        setState(() => isSignedUp = true);
+        Future.delayed(
+          Duration(seconds: 2),
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return Scaffold(
+                  body: Text("SignUp Successfull"),
+                );
+              },
+            )
+          ),
+        );
+      }
     }
   }
 

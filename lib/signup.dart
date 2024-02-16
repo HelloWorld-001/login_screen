@@ -106,7 +106,7 @@ class _SignUpState extends State<SignUp> {
   }
 
   void performFunction(context) async {
-    String registerResult = await AuthMethods().registeruser(
+    String registerResult = await AuthMethods().registerUser(
       email: emailController.text,
       password: passwordController.text
     );
