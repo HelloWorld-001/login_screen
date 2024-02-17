@@ -1,22 +1,20 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:login_screen/auth_methods.dart';
 import 'package:login_screen/input_box.dart';
 import 'package:login_screen/landing_page.dart';
 import 'package:login_screen/verification_page.dart';
 
-class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+class SignUp extends StatelessWidget {
+  SignUp({super.key});
 
-  @override
-  State<SignUp> createState() => _SignUpState();
-}
+  final nameController = TextEditingController().obs;
 
-class _SignUpState extends State<SignUp> {
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final emailController = TextEditingController().obs;
+
+  final passwordController = TextEditingController().obs;
 
   @override
   Widget build(BuildContext context) {
@@ -26,28 +24,28 @@ class _SignUpState extends State<SignUp> {
         children: [
           SizedBox(height: 25),
           InputBox(
-            controller: nameController,
+            controller: nameController.value,
             textInputType: TextInputType.text,
             hintText: "Name",
             prefixIcon: Icons.person_rounded,
           ),
           SizedBox(height: 20),
           InputBox(
-            controller: emailController,
+            controller: emailController.value,
             textInputType: TextInputType.emailAddress,
             hintText: "Email",
             prefixIcon: Icons.email_rounded,
           ),
           SizedBox(height: 20),
           InputBox(
-            controller: passwordController,
+            controller: passwordController.value,
             textInputType: TextInputType.text,
             hintText: "Password",
             prefixIcon: Icons.password,
           ),
           SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () => performFunction(context),
+            onPressed: () => signUp(context),
             style: ButtonStyle(
               fixedSize: MaterialStatePropertyAll(Size(double.maxFinite, 50)),
               backgroundColor: MaterialStatePropertyAll(Colors.black),
@@ -82,14 +80,7 @@ class _SignUpState extends State<SignUp> {
             onPressed: () async {
               Map<String, String> googleSignInResult = await AuthMethods().googleSignIn();
               if(googleSignInResult.entries.first.key != "err") {
-                if(mounted) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LandingPage(),
-                    )
-                  );
-                }
+                Get.to(() => LandingPage());
               }
             },
             style: ButtonStyle(
@@ -118,27 +109,19 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  void performFunction(context) async {
+  void signUp(context) async {
     String registerResult = await AuthMethods().registerUserWithEmail(
-      email: emailController.text,
-      password: passwordController.text
+      email: emailController.value.text,
+      password: passwordController.value.text
     );
     if(registerResult != 'success') {
       return;
     }
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => VerificationPage(email: emailController.text, name: nameController.text)
+    Get.to(
+      () => VerificationPage(
+        email: emailController.value.text,
+        name: nameController.value.text
       )
     );
-  }
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
   }
 }

@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:login_screen/auth_methods.dart';
 import 'package:login_screen/main.dart';
 
@@ -17,10 +18,7 @@ class LandingPage extends StatelessWidget {
           onPressed: () async {
             String googleRes = await AuthMethods().googleSignOut();
             await FirebaseAuth.instance.signOut();
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => MainApp())
-            );
+            Get.offAll(() => SignUpLoginPage());
           },
           child: Text("Logout")
         ),

@@ -1,20 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:login_screen/auth_methods.dart';
 import 'package:login_screen/input_box.dart';
 import 'package:login_screen/landing_page.dart';
 
-class LogIn extends StatefulWidget {
+class LogIn extends StatelessWidget {
   LogIn({super.key});
 
-  @override
-  State<LogIn> createState() => _LogInState();
-}
-
-class _LogInState extends State<LogIn> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final emailController = TextEditingController().obs;
+  final passwordController = TextEditingController().obs;
 
   @override
   Widget build(BuildContext context) {
@@ -25,21 +21,21 @@ class _LogInState extends State<LogIn> {
           children: [
             SizedBox(height: 25),
             InputBox(
-              controller: emailController,
+              controller: emailController.value,
               textInputType: TextInputType.emailAddress,
               hintText: "Email",
               prefixIcon: Icons.mail_rounded,
             ),
             SizedBox(height: 20),
             InputBox(
-              controller: passwordController,
+              controller: passwordController.value,
               textInputType: TextInputType.text,
               hintText: "Password",
               prefixIcon: Icons.password,
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: signIn,
+              onPressed: logIn,
               style: ButtonStyle(
                 fixedSize: MaterialStatePropertyAll(Size(double.maxFinite, 50)),
                 backgroundColor: MaterialStatePropertyAll(Colors.black),
@@ -74,14 +70,7 @@ class _LogInState extends State<LogIn> {
               onPressed: () async {
                 Map<String, String> googleSignInResult = await AuthMethods().googleSignIn();
                 if(googleSignInResult.entries.first.key != "err") {
-                  if(mounted) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LandingPage(),
-                      )
-                    );
-                  }
+                  Get.to(() => LandingPage());
                 } else {
                   print(googleSignInResult);
                 }
@@ -113,26 +102,12 @@ class _LogInState extends State<LogIn> {
     );
   }
 
-  void signIn() async {
-    String signInResult = await AuthMethods().loginUser(email: emailController.text, password: passwordController.text);
+  void logIn() async {
+    String signInResult = await AuthMethods().loginUser(email: emailController.value.text, password: passwordController.value.text);
     if(signInResult == "success") {
-      if(mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LandingPage(),
-          )
-        );
-      }
+      Get.to(() => LandingPage());
     } else {
       print(signInResult);
     }
-  }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
   }
 }

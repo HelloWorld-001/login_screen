@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:login_screen/background_page.dart';
 import 'package:login_screen/firebase_options.dart';
 import 'package:login_screen/landing_page.dart';
@@ -24,17 +25,11 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: Colors.black
       ),
-      home: Stack(
-        alignment: Alignment.center,
-        children: [
-          BackgroundPage(),
-          AuthChecker(),
-        ],
-      ),
+      home: AuthChecker(),
     );
   }
 }
@@ -69,106 +64,110 @@ class AuthChecker extends StatelessWidget {
   }
 }
 
-class SignUpLoginPage extends StatefulWidget {
+class SignUpLoginPage extends StatelessWidget {
   SignUpLoginPage({super.key});
 
-  @override
-  State<SignUpLoginPage> createState() => _SignUpLoginPageState();
-}
-
-class _SignUpLoginPageState extends State<SignUpLoginPage> {
-  bool login = true;
+  final RxBool login = true.obs;
 
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.sizeOf(context);
     double outerRadius = 60;
     double innerRadius = 0;
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                color: Colors.transparent,
-                height: media.height/1.4, width: media.width,
-                margin: EdgeInsets.symmetric(horizontal: media.width/10, vertical: media.height/8),
-                child: ClipPath(
-                  clipper: CardClipper(
-                    innerRadius: innerRadius, outerRadius: outerRadius,
-                    size: Size(media.width/1.25, media.height/1.4)
-                  ),
-                  child: Card(
-                    elevation: 1,
-                    shadowColor: Colors.white.withOpacity(0.7),
-                    color: Color(0xFFFBF9F1).withOpacity(0.8),
-                    child: Container(
-                      height: double.maxFinite, width: double.maxFinite,
-                      constraints: BoxConstraints(maxHeight: double.maxFinite),
-                      padding: const EdgeInsets.only(top: 80),
-                      child: Scaffold(
-                        backgroundColor: Colors.transparent,
-                        resizeToAvoidBottomInset: false,
-                        body: Column(
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                GestureDetector(
-                                  onTap: () => setState(() => login = true),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-                                    decoration: BoxDecoration(
-                                      color: (login) ? Color(0xFF7E30E1) : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(color: Color(0xFF7E30E1), width: 3)
+    return Stack(
+      children: [
+        BackgroundPage(),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    color: Colors.transparent,
+                    height: media.height/1.4, width: media.width,
+                    margin: EdgeInsets.symmetric(horizontal: media.width/10, vertical: media.height/8),
+                    child: ClipPath(
+                      clipper: CardClipper(
+                        innerRadius: innerRadius, outerRadius: outerRadius,
+                        size: Size(media.width/1.25, media.height/1.4)
+                      ),
+                      child: Card(
+                        elevation: 1,
+                        shadowColor: Colors.white.withOpacity(0.7),
+                        color: Color(0xFFFBF9F1).withOpacity(0.8),
+                        child: Container(
+                          height: double.maxFinite, width: double.maxFinite,
+                          constraints: BoxConstraints(maxHeight: double.maxFinite),
+                          padding: const EdgeInsets.only(top: 80),
+                          child: Scaffold(
+                            backgroundColor: Colors.transparent,
+                            resizeToAvoidBottomInset: false,
+                            body: Obx(
+                              () {
+                                return Column(
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () => login.value = true,
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                                            decoration: BoxDecoration(
+                                              color: (login.value) ? Color(0xFF7E30E1) : Colors.transparent,
+                                              borderRadius: BorderRadius.circular(5),
+                                              border: Border.all(color: Color(0xFF7E30E1), width: 3)
+                                            ),
+                                            child: Text(
+                                              "Login",
+                                              style: TextStyle(color: (login.value) ? Colors.white : Color(0xFF7E30E1), fontWeight: FontWeight.bold, fontSize: 30),
+                                            ),
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () => login.value = false,
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                                            decoration: BoxDecoration(
+                                              color: (!login.value) ? Color(0xFF7E30E1) : Colors.transparent,
+                                              borderRadius: BorderRadius.circular(5),
+                                              border: Border.all(color: Color(0xFF7E30E1), width: 3)
+                                            ),
+                                            child: Text(
+                                              "SignUp",
+                                              style: TextStyle(color: (!login.value) ? Colors.white : Color(0xFF7E30E1), fontWeight: FontWeight.bold, fontSize: 30),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    child: Text(
-                                      "Login",
-                                      style: TextStyle(color: (login) ? Colors.white : Color(0xFF7E30E1), fontWeight: FontWeight.bold, fontSize: 30),
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () => setState(() => login = false),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-                                    decoration: BoxDecoration(
-                                      color: (!login) ? Color(0xFF7E30E1) : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(color: Color(0xFF7E30E1), width: 3)
-                                    ),
-                                    child: Text(
-                                      "SignUp",
-                                      style: TextStyle(color: (!login) ? Colors.white : Color(0xFF7E30E1), fontWeight: FontWeight.bold, fontSize: 30),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                    (login.value) ? LogIn() : SignUp()
+                                  ],
+                                );
+                              }
                             ),
-                            (login) ? LogIn() : SignUp()
-                          ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                  Positioned(
+                    top: media.height/20,
+                    child: Lottie.asset(
+                      "assets/lottie_json/pandaWithHeadphones.json",
+                      animate: true,
+                      width: 150, height: 150
+                    ),
+                  ),
+                ],
               ),
-              Positioned(
-                top: media.height/20,
-                child: Lottie.asset(
-                  "assets/lottie_json/pandaWithHeadphones.json",
-                  animate: true,
-                  width: 150, height: 150
-                ),
-              ),
-            ],
-          ),
+            ),
+          )
         ),
-      )
+      ],
     );
   }
 }
